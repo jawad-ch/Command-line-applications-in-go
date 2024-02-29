@@ -35,7 +35,7 @@ func (l *List) Add(task string) {
 
 func (l *List) Complete(i int) error {
 	ls := *l
-	fmt.Println("from complete")
+
 	if i <= 0 || i > len(ls) {
 		return fmt.Errorf("item %d does not exist", i)
 	}
@@ -88,4 +88,20 @@ func (l *List) Get(filename string) error {
 	}
 
 	return json.Unmarshal(file, l)
+}
+
+// String prints out a formatted list
+// Implements the fmt.Stringer interface
+func (l *List) String() string {
+	formatted := ""
+
+	for k, t := range *l {
+		prefix := "\t"
+		if t.Done {
+			prefix = "X\t"
+		}
+
+		formatted += fmt.Sprintf("%s%d: %s\n", prefix, k+1, t.Task)
+	}
+	return formatted
 }

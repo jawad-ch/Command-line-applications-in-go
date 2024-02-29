@@ -5,12 +5,20 @@ import (
 	"fmt"
 	"github.com/jawad-ch/Command-line-applications-in-go/todo"
 	"os"
+	"time"
 )
 
 // HardCoding the file name
 const todoFileName = ".todo.json"
 
 func main() {
+	flag.Usage = func() {
+		_, _ = fmt.Fprintf(flag.CommandLine.Output(), "%s tool. \nDeveloped for The Pragmatic Bookshelf\n", os.Args[0])
+		_, _ = fmt.Fprintf(flag.CommandLine.Output(), "Copyright %d\n", time.Now().Year())
+		_, _ = fmt.Fprintln(flag.CommandLine.Output(), "Usage information:")
+		flag.PrintDefaults()
+	}
+
 	// Parsing command line flags
 	task := flag.String("task", "", "Task to be included in the ToDo list")
 	list := flag.Bool("list", false, "List all tasks")
@@ -30,11 +38,12 @@ func main() {
 	switch {
 	case *list:
 		// List current to do items
-		for _, item := range *l {
-			if !item.Done {
-				fmt.Println(item.Task)
-			}
-		}
+		fmt.Print(l)
+		//for _, item := range *l {
+		//	if !item.Done {
+		//		fmt.Println(item.Task)
+		//	}
+		//}
 	case *complete > 0:
 		// Complete the given item
 		if err := l.Complete(*complete); err != nil {
