@@ -92,16 +92,50 @@ func (l *List) Get(filename string) error {
 
 // String prints out a formatted list
 // Implements the fmt.Stringer interface
-func (l *List) String() string {
+func (l *List) String(limit int) string {
 	formatted := ""
-
-	for k, t := range *l {
+	ls := *l
+	if limit >= 0 {
+		if limit > len(ls) {
+			limit = len(ls)
+		}
+		ls = ls[:limit]
+	}
+	for k, t := range ls {
 		prefix := "\t"
+		createdAt := t.getDate(false)
+		completedAt := ""
 		if t.Done {
 			prefix = "X\t"
+			completedAt = fmt.Sprintf("[completed : %s]", t.getDate(true))
 		}
 
-		formatted += fmt.Sprintf("%s%d: %s\n", prefix, k+1, t.Task)
+		formatted += fmt.Sprintf("%s%d: %s [created : %s]%s\n", prefix, k+1, t.Task, createdAt, completedAt)
 	}
 	return formatted
+}
+
+func (task *item) getDate(completeTime bool) string {
+	d := task.CreatedAt.String()
+	if completeTime {
+		d = task.CompletedAt.String()
+	}
+	parsedDate, err := time.Parse("2006-01-02 15:04:05.999999999 -0700 -07", d)
+	if err != nil {
+		fmt.Println("Error parsing date:", err)
+		return "error parsing date"
+	}
+
+	// Calculate the time difference
+	duration := time.Since(parsedDate)
+
+	// Convert the duration to minutes
+	minutes := int(duration.Minutes())
+
+	// Print the human-readable format
+	if minutes < 1 {
+		return fmt.Sprintf("Just now")
+	} else {
+		return fmt.Sprintf("%d min ago", minutes)
+	}
 }
