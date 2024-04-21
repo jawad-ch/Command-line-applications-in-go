@@ -7,10 +7,11 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 type config struct {
-	ext     string
+	exts    []string
 	size    int64
 	list    bool
 	del     bool
@@ -24,7 +25,7 @@ func main() {
 	list := flag.Bool("list", false, "List files only")
 	archive := flag.String("archive", "", "Archive directory")
 	del := flag.Bool("del", false, "Delete files")
-	ext := flag.String("ext", "", "File extension to filter out")
+	ext := flag.String("ext", "", "File extension to filter out\n(comma-seperated for more the one extension)")
 	size := flag.Int64("size", 0, "Minimum file size")
 
 	flag.Parse()
@@ -43,8 +44,10 @@ func main() {
 		defer f.Close()
 	}
 
+	exts := strings.Split(*ext, ",")
+
 	c := config{
-		ext:     *ext,
+		exts:    exts,
 		size:    *size,
 		list:    *list,
 		del:     *del,
@@ -59,14 +62,13 @@ func main() {
 }
 
 func run(root string, out io.Writer, cfg config) error {
-	log.Printf("\n\n vfg logger =>-------------> \t %q \n\n", cfg.wLog)
 	delLogger := log.New(cfg.wLog, "DELETED FILE: ", log.LstdFlags)
 	return filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 
-		if filterOut(path, cfg.ext, cfg.size, info) {
+		if filterOut(path, cfg.exts, cfg.size, info) {
 			return nil
 		}
 

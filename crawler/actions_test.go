@@ -7,32 +7,34 @@ import (
 
 type testCase struct {
 	name     string
-	file     string
-	ext      string
+	files    []string
+	exts     []string
 	minSize  int64
 	expected bool
 }
 
 func TestFilterOut(t *testing.T) {
 	testCases := []testCase{
-		{"FilterNoExtension", "testdata/dir.log", "", 0, false},
-		{"FilterExtensionMatch", "testdata/dir.log", ".log", 0, false},
-		{"FilterExtensionNoMatch", "testdata/dir.log", ".sh", 0, true},
-		{"FilterExtensionSizeMatch", "testdata/dir.log", ".log", 10, false},
-		{"FilterExtensionSizeNoMatch", "testdata/dir.log", ".log", 20, true},
+		{"FilterNoExtension", []string{"testdata/dir.log"}, []string{}, 0, false},
+		{"FilterExtensionMatch", []string{"testdata/dir.log"}, []string{".log"}, 0, false},
+		{"FilterExtensionNoMatch", []string{"testdata/dir.log"}, []string{".sh"}, 0, true},
+		{"FilterExtensionSizeMatch", []string{"testdata/dir.log"}, []string{".log"}, 10, false},
+		{"FilterExtensionSizeNoMatch", []string{"testdata/dir.log"}, []string{".log"}, 20, true},
 	}
 
-	for _, tc := range testCases {
+	for i, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			info, err := os.Stat(tc.file)
-			if err != nil {
-				t.Fatal(err)
-			}
+			for _, file := range tc.files {
+				info, err := os.Stat(file)
+				if err != nil {
+					t.Fatal(err)
+				}
 
-			f := filterOut(tc.file, tc.ext, tc.minSize, info)
+				f := filterOut(file, tc.exts, tc.minSize, info)
 
-			if f != tc.expected {
-				t.Errorf("Expected '%t', got '%t' instead\n", tc.expected, f)
+				if f != tc.expected {
+					t.Errorf("Expected '%t', got '%t' instead at index = %d\n", tc.expected, f, i)
+				}
 			}
 		})
 	}
