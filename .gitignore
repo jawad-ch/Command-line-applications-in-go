@@ -27,3 +27,14 @@ _vendor/
 # Windows
 Thumbs.db
 Desktop.ini
+
+# Ignore compiled Go binaries and packages
+*.exe
+*.dll
+*.dylib
+
+# Ignore binary files and archives
+*.tar.gz
+
+# Ignore test data directory
+/testdata/
