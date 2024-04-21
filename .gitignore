@@ -34,7 +34,8 @@ Desktop.ini
 *.dylib
 
 # Ignore binary files and archives
-*.tar.gz
+**/*.tar.gz
+**/*.gz
 
 # Ignore test data directory
-/testdata/
+**/testdata/
