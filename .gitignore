@@ -22,7 +22,7 @@ _vendor/
 
 # Dependency directories (remove the ones you don't use)
 /vendor/
-/go.sum
+**/go.sum
 
 # macOS
 .DS_Store
