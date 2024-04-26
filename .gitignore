@@ -18,7 +18,7 @@ _vendor/
 *.out
 
 # Project-specific output files
-# your-app-name
+**/colStats
 
 # Dependency directories (remove the ones you don't use)
 /vendor/
