@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"runtime"
 	"sync"
 )
 
@@ -48,32 +49,43 @@ func run(filenames []string, op string, column int, out io.Writer) error {
 	resCh := make(chan []float64)
 	errCh := make(chan error)
 	doneCh := make(chan struct{})
+	filesCh := make(chan string)
 
 	wg := sync.WaitGroup{}
 
+	// Loop through all files sending them through the channel
+	// so each one will be processed when a worker is available
+	go func() {
+		defer close(filesCh)
+		for _, fname := range filenames {
+			filesCh <- fname
+		}
+	}()
+
 	// Loop through all files adding their data to consolidate
-	for _, fname := range filenames {
+	for i := 0; i < runtime.NumCPU(); i++ {
 		wg.Add(1)
-		go func(fname string) {
+		go func() {
 			defer wg.Done()
-			f, err := os.Open(fname)
-			if err != nil {
-				errCh <- fmt.Errorf("cannot open file: %w", err)
+			for fname := range filesCh {
+
+				f, err := os.Open(fname)
+				if err != nil {
+					errCh <- fmt.Errorf("cannot open file: %w", err)
+				}
+
+				data, err := csv2float(f, column)
+				if err != nil {
+					errCh <- err
+				}
+
+				if err := f.Close(); err != nil {
+					errCh <- err
+				}
+
+				resCh <- data
 			}
-
-			data, err := csv2float(f, column)
-			if err != nil {
-				errCh <- err
-			}
-
-			if err := f.Close(); err != nil {
-				errCh <- err
-			}
-
-			resCh <- data
-
-		}(fname)
-
+		}()
 	}
 
 	go func() {
