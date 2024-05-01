@@ -61,8 +61,8 @@ func run(proj string, out io.Writer) error {
 		10*time.Second,
 	)
 
-	for _, s := range pipeline {
-		msg, err := s.execute()
+	for _, step := range pipeline {
+		msg, err := step.execute()
 		if err != nil {
 			return err
 		}
