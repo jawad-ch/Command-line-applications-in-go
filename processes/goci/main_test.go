@@ -35,7 +35,8 @@ func TestRun(t *testing.T) {
 			out: "go build: success\n" +
 				"go test: success\n" +
 				"Gofmt: SUCCESS\n" +
-				"Git Push: SUCCESS\n",
+				"Git Push: SUCCESS\n" +
+				"gocyclo: SUCCESS\n",
 			expErr:   nil,
 			setupGit: true,
 			mockCmd:  nil,
@@ -46,7 +47,8 @@ func TestRun(t *testing.T) {
 			out: "go build: success\n" +
 				"go test: success\n" +
 				"Gofmt: SUCCESS\n" +
-				"Git Push: SUCCESS\n",
+				"Git Push: SUCCESS\n" +
+				"gocyclo: SUCCESS\n",
 			expErr:   nil,
 			setupGit: false,
 			mockCmd:  mockCmdContext,

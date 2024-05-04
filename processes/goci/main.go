@@ -28,7 +28,7 @@ func run(proj string, out io.Writer) error {
 		return fmt.Errorf("project directory is required: %w", ErrValidation)
 	}
 
-	pipeline := make([]executer, 4)
+	pipeline := make([]executer, 5)
 
 	pipeline[0] = newStep(
 		"go build",
@@ -61,6 +61,14 @@ func run(proj string, out io.Writer) error {
 		proj,
 		[]string{"push", "origin", "master"},
 		10*time.Second,
+	)
+
+	pipeline[4] = newGocycloStep(
+		"gocyclo",
+		"gocyclo",
+		"gocyclo: SUCCESS",
+		proj,
+		[]string{"-over", "10", "."},
 	)
 
 	sig := make(chan os.Signal, 1)
