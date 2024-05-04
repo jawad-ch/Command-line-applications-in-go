@@ -7,6 +7,7 @@ import (
 
 var (
 	ErrValidation = errors.New("valdation failed")
+	ErrSignal     = errors.New("received signal")
 )
 
 type stepErr struct {

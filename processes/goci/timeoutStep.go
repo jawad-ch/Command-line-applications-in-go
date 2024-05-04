@@ -41,7 +41,6 @@ func (s timeoutStep) execute() (string, error) {
 	cmd := command(ctx, s.exe, s.args...)
 	cmd.Dir = s.proj
 	if err := cmd.Run(); err != nil {
-
 		if ctx.Err() == context.DeadlineExceeded {
 			return "", &stepErr{
 				step:  s.name,

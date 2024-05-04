@@ -18,6 +18,7 @@ func newExceptionStep(name, exe, message, proj string, args []string) exceptionS
 
 func (s exceptionStep) execute() (string, error) {
 	cmd := exec.Command(s.exe, s.args...)
+
 	var out bytes.Buffer
 	cmd.Stdout = &out
 
