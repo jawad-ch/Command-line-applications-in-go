@@ -4,11 +4,12 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
-	"github.com/jawad-ch/Command-line-applications-in-go/todo"
 	"io"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/jawad-ch/Command-line-applications-in-go/todo"
 )
 
 // Default file name
@@ -41,7 +42,7 @@ func main() {
 
 	// Use the Get method to read to do items from file
 	if err := l.Get(todoFileName); err != nil {
-		_, _ = fmt.Fprintln(os.Stderr, err)
+		_, _ = fmt.Fprintf(os.Stderr, "%w : hnnn", err)
 		os.Exit(1)
 	}
 
