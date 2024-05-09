@@ -53,7 +53,7 @@ func (i Interval) Start(ctx context.Context, config *IntervalConfig, start, peri
 		}
 		return tick(ctx, i.ID, config, start, periodic, end)
 	case StateCancelled, StateDone:
-		return fmt.Errorf("%s, Cannot start", ErrIntervalCompleted)
+		return fmt.Errorf("%w, Cannot start", ErrIntervalCompleted)
 	default:
 		return fmt.Errorf("%w: %d", ErrInvalidState, i.State)
 	}
@@ -170,6 +170,7 @@ func tick(ctx context.Context, id int64, config *IntervalConfig, start, periodic
 			if err := config.repo.Update(i); err != nil {
 				return err
 			}
+
 			periodic(i)
 		case <-expire:
 			i, err := config.repo.ByID(id)
@@ -220,8 +221,9 @@ func newInterval(config *IntervalConfig) (Interval, error) {
 }
 
 func GetInterval(config *IntervalConfig) (Interval, error) {
-	i := Interval{}
+	var i Interval
 	var err error
+
 	i, err = config.repo.Last()
 	if err != nil && err != ErrNoIntervals {
 		return i, err

@@ -40,32 +40,32 @@ func (r *inMemoryRepo) Update(i pomodoro.Interval) error {
 }
 
 func (r *inMemoryRepo) ByID(id int64) (pomodoro.Interval, error) {
-	r.Lock()
-	defer r.Unlock()
+	r.RLock()
+	defer r.RUnlock()
 
 	i := pomodoro.Interval{}
-	if i.ID == 0 {
-		return i, fmt.Errorf("%w, %d", pomodoro.ErrINvalidId, i.ID)
+	if id == 0 {
+		return i, fmt.Errorf("%w, %d", pomodoro.ErrINvalidId, id)
 	}
 	i = r.intervals[id-1]
 	return i, nil
 }
 
 func (r *inMemoryRepo) Last() (pomodoro.Interval, error) {
-	r.Lock()
-	defer r.Unlock()
+	r.RLock()
+	defer r.RUnlock()
 
 	i := pomodoro.Interval{}
 	if len(r.intervals) == 0 {
-		return i, pomodoro.ErrINvalidId
+		return i, pomodoro.ErrNoIntervals
 	}
 
 	return r.intervals[len(r.intervals)-1], nil
 }
 
 func (r *inMemoryRepo) Breaks(n int) ([]pomodoro.Interval, error) {
-	r.Lock()
-	defer r.Unlock()
+	r.RLock()
+	defer r.RUnlock()
 
 	data := []pomodoro.Interval{}
 
